@@ -1,0 +1,57 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+## Introduction
+
+Mesa: Agent-based Modeling in Python Python-based alternative to NetLogo, Repast, or MASON for agent-based modeling
+
+Agent-based modeling relies on simulating the actions and interactions of autonomous agents to evaluate their effects on the system. It is often used to predict the projections that we will obtain given a complex phenomena. The main purpose is to obtain explanatory insight on how the agents will behave given a particular set of rules. Agent-based modeling has been extensively used in numerous industry such as biology, social sciences, network and business. This article covers the necessary steps to kick-start your agent-based modeling project using an open-source python module called Mesa.
+
+### Schelling Segregation Model
+
+We will be using the famous Schelling Segregation model as use case for this tutorial. Please be noted that the introductory tutorial on the official mesa site is based on Boltzmann Wealth model. Schelling Segregation model is a better use case to explain how we can use agent-based modeling to explain why racial segregation issue is difficult to be eradicated. Although the actual model is quite simple, it provides explanatory insights at how individuals might self-segregate even though when they have no explicit desire to do so. Let's have a look at the explanation for this model provided by the Mesa official github page:
+
+> The Schelling segregation model is a classic agent-based model, demonstrating how even a mild preference for similar neighbors can lead to a much higher degree of segregation than we would intuitively expect. The model consists of agents on a square grid, where each grid cell can contain at most one agent. Agents come in two colors: red and blue. They are happy if a certain number of their eight possible neighbors are of the same color, and unhappy otherwise. Unhappy agents will pick a random empty cell to move to each step, until they are happy. The model keeps running until there are no unhappy agents. By default, the number of similar neighbors the agents need to be happy is set to 3. That means the agents would be perfectly happy with a majority of their neighbors being of a different color (e.g. a Blue agent would be happy with five Red neighbors and three Blue ones). Despite this, the model consistently leads to a high degree of segregation, with most agents ending up with no neighbors of a different color.
+
+The code is quite straightforward:
+Initialize the Agent class.
+Create a step function.
+Calculate the number of similar neighbors.
+Move the agent to a empty location if the agent is unhappy.
+Model: For the model class. We will go through each part one-by-one to have a clearer understanding of how agent-based modeling works. First and foremost, create a Schelling class and define a init function as constructor.
+
+
+Variables: The system will consists of at least a basic agent class and a model class. Let’s start by writing the model first. We will need to define 5 main variables:
+
+Width: Horizontal axis of the grid which is used together with Height to define the total number of agents in the system.
+
+Height: Vertical axis of the grid which is used together with Width to define the total number of agents in the system.
+
+Density: Define the population density of agent in the system. Floating value from 0 to 1.
+
+Fraction minority: The ratio between blue and red. Blue is represented as the minority while red is represented as the majority. Floating value from 0 to 1. If the value is higher than 0.5, blue will become the majority instead.
+
+Homophily: Define the number of similar neighbors required for the agents to be happy. Integer value range from 0 to 8 since you can only be surrounded by 8 neighbors.
+
+Grid: We will need to set the grid using the space module under mesa.
+
+
+Scheduler: Next up, we will need to have a scheduler. The scheduler is a special model component which controls the order in which agents are activated. The most common scheduler is the random activation which activates all the agents once per step, in random order. There is also another type called Simultaneous activation. Check out the API reference to find out more.
+
+
+
+Data Collection: Data collection is essential to ensure that we obtained the necessary data after each step of the simulation. You can use the built-in datacollection module. In this case, we only need to know whether the agent is happy or not.
+
+
+
+## References
+
+[The Forest Fire Model](https://nbviewer.org/gist/jlstevens/9c7835e4e21c5d844ded)
+
+[Mesa Packages](https://github.com/projectmesa/mesa/wiki/Mesa-Packages)
+
+[Mesa SIR](https://github.com/metalcorebear/Mesa-SIR)
+
+[ABM Infection model with Mesa](https://github.com/dmnfarrell/teaching/blob/master/SIR_modelling/multigrid_model_SIR.ipynb)
