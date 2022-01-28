@@ -17,6 +17,14 @@ We will be using the famous Schelling Segregation model as use case for this tut
 
 The code is quite straightforward: Initialize the Agent class. Create a step function. Calculate the number of similar neighbors. Move the agent to a empty location if the agent is unhappy. Model: For the model class. We will go through each part one-by-one to have a clearer understanding of how agent-based modeling works. First and foremost, create a Schelling class and define a init function as constructor.
 
+```{python eval=FALSE}
+
+```
+
+```{python eval=FALSE}
+
+```
+
 Variables: The system will consists of at least a basic agent class and a model class. Let's start by writing the model first. We will need to define 5 main variables:
 
 Width: Horizontal axis of the grid which is used together with Height to define the total number of agents in the system.
@@ -31,16 +39,30 @@ Homophily: Define the number of similar neighbors required for the agents to be 
 
 Grid: We will need to set the grid using the space module under mesa.
 
+```{python eval=FALSE}
+
+```
+
 Scheduler: Next up, we will need to have a scheduler. The scheduler is a special model component which controls the order in which agents are activated. The most common scheduler is the random activation which activates all the agents once per step, in random order. There is also another type called Simultaneous activation. Check out the API reference to find out more.
 
+```{python eval=FALSE}
+
+```
 Data Collection: Data collection is essential to ensure that we obtained the necessary data after each step of the simulation. You can use the built-in datacollection module. In this case, we only need to know whether the agent is happy or not.
 
+```{python eval=FALSE}
+
+```
 
 ### Infection model
 
 Mesa SIR is an extension for Python's Agent Based Modeling Library Mesa. Mesa SIR provides the basic building blocks for an Agent Based Susceptible-Infected-Recovered (SIR) Epidemic model. The hope is others will improve upon it to make it a robust ABM extension to aid in understanding and decision making for both COVID-19 and future pandemics.
 
 the main differences between this model and a grid based model are as follows:
+
+```{python eval=FALSE}
+
+```
 
 ## References
 
