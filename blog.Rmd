@@ -166,8 +166,127 @@ Mesa SIR is an extension for Python's Agent Based Modeling Library Mesa. Mesa SI
 the main differences between this model and a grid based model are as follows:
 
 ```{python eval=FALSE}
-
+%matplotlib notebook
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+from mesa import Agent, Model
+from mesa.time import RandomActivation
+from mesa.space import ContinuousSpace
+import mesa
+from mesa.datacollection import DataCollector
+import numpy as np
+from statistics import mean 
+import pandas as pd
+import collections
 ```
+
+```{python eval=FALSE}
+def flatten(x):
+    if isinstance(x, collections.Iterable):
+        return [a for i in x for a in flatten(i)]
+    else:
+        return [x]
+```
+
+
+```{python eval=FALSE}
+class MyAgent(Agent):
+    
+    def __init__(self, name, model,pos,dest=None, choi= None):
+        super().__init__(name, model)
+        self.name = name
+        self.pos= pos
+        self.neigh=None
+        self.neigh_names=None
+        self.heading=None
+        self.dest=dest
+        self.choices = choi
+        self.posl1=None
+        
+    def neigh_namer(self, neigh):
+        me = self.name
+        them = (n.name for n in neigh)
+        Names = []
+        for other in them:
+            Names.append(other)
+        return Names  
+    def dest_adjuster(self):
+        m1 = self.heading
+        if m1==(0,0):
+            kk=np.array([[10,90],[55,55],[90,10],[10,10]])
+            jj=kk[np.random.choice(len(kk),1)]
+            m2=np.array((jj[0][0],jj[0][1]))
+        else:
+            m2=self.dest
+        return m2
+
+
+    def step(self):
+        neigh = self.model.space.get_neighbors(self.pos, 3, False)
+        self.neigh=neigh
+        self.neigh_names=self.neigh_namer(neigh)
+        self.heading=self.model.space.get_heading(self.pos, self.dest)
+        self.posl1=self.pos
+        self.dest=self.dest_adjuster()
+        new_step =[round(x/y) for x, y in zip([ x for x in self.heading], [ abs(x)+0.000001 for x in self.heading])]
+        new_pos = (self.pos[0]+new_step[0],self.pos[1]+new_step[1])
+        print("{} activated".format(self.name))
+        self.model.space.move_agent(self, new_pos)
+```
+
+```{python eval=FALSE}
+class MyModel(Model):
+    
+    def __init__(self, n_agents,xylim=200, prob=0.05,):
+        super().__init__()
+        self.schedule = RandomActivation(self)
+        self.space = ContinuousSpace(xylim, xylim, torus=False)
+        for i in range(n_agents):
+            pos = (self.random.randrange(0, 100), self.random.randrange(0, 100))
+            choices=np.array([[90,90],[55,55],[90,10],[10,10]])
+            choi=choices[np.random.choice(len(choices),1)]
+            dest=np.array((choi[0][0],choi[0][1]))
+            a = MyAgent(i, self,pos, dest,choi)
+            self.schedule.add(a)
+            self.space.place_agent(a, pos)
+            self.dest=dest
+            self.choices=choi
+            self.dc = DataCollector(model_reporters={"agent_count":
+                                    lambda m: m.schedule.get_agent_count()},
+                                #agent_reporters={"neigh": lambda a: [a.neigh, a.name] }
+                                agent_reporters={"neigh": lambda a: a.neigh_names,
+                                                "name": lambda a: a.name,
+                                                "pos": lambda a: a.pos,
+                                                "posl1": lambda a: a.posl1,
+                                                "heading": lambda a: a.heading,
+                                                "choice": lambda a: a.choices}
+                                   )
+
+    def step(self):
+        self.schedule.step()
+        self.dc.collect(self)
+```
+
+```{python eval=FALSE}
+nagent=30
+nstep=200
+```
+
+```{python eval=FALSE}
+model = MyModel(nagent)
+for t in range(nstep):
+    model.step()
+model_df = model.dc.get_model_vars_dataframe()
+agent_df = model.dc.get_agent_vars_dataframe()
+
+
+model_df
+```
+
+```{python eval=FALSE}
+agent_df["neigh"]
+```
+
 
 ## References
 
