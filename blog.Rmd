@@ -15,6 +15,8 @@ This tutorial first will focus the Schelling Segregation model, a use-case of ag
 
 The code for this model is simple we will go through each part one-by-one to have a clearer understanding of how agent-based modeling works. The procedure includes steps such as Initializing the agent class, creating a step function, extracting the number of similar neighbors and moving the agent to an empty location if the agent is unhappy. 
 
+First we upload the necessary modules
+
 ```{python eval=FALSE}
 from mesa import Model, Agent
 from mesa.time import RandomActivation
@@ -24,6 +26,12 @@ import matplotlib.pyplot as plt
 %matplotlib inline
 
 ```
+
+
+The system will consists of at least a basic agent class and a model class.
+
+Let's start by writing the agent class first. We will need to define 2 main variables of position and agent type and a dependency variable to model to get access to the variables specified in the model.  
+
 
 ```{python eval=FALSE}
 
@@ -59,6 +67,17 @@ class SchellingAgent(Agent):
 
 ```
 
+Then we develop model class, here we will need to define 5 main variables:
+
+Width: Horizontal axis of the grid which is used together with Height to define the total number of agents in the system.
+
+Height: Vertical axis of the grid which is used together with Width to define the total number of agents in the system.
+
+Density: Define the population density of agent in the system. Floating value from 0 to 1.
+
+Fraction minority: The ratio between blue and red. Blue is represented as the minority while red is represented as the majority. Floating value from 0 to 1. If the value is higher than 0.5, blue will become the majority instead.
+
+Homophily: Define the number of similar neighbors required for the agents to be happy. Integer value range from 0 to 8 since you can only be surrounded by 8 neighbors.
 
 ```{python eval=FALSE}
 
@@ -119,19 +138,7 @@ class Schelling(Model):
             self.running = False
 ```
 
-Variables: The system will consists of at least a basic agent class and a model class. Let's start by writing the model first. We will need to define 5 main variables:
-
-Width: Horizontal axis of the grid which is used together with Height to define the total number of agents in the system.
-
-Height: Vertical axis of the grid which is used together with Width to define the total number of agents in the system.
-
-Density: Define the population density of agent in the system. Floating value from 0 to 1.
-
-Fraction minority: The ratio between blue and red. Blue is represented as the minority while red is represented as the majority. Floating value from 0 to 1. If the value is higher than 0.5, blue will become the majority instead.
-
-Homophily: Define the number of similar neighbors required for the agents to be happy. Integer value range from 0 to 8 since you can only be surrounded by 8 neighbors.
-
-Grid: We will need to set the grid using the space module under mesa.
+Thereafter we will need to set the model specification, this can be only for one model or a batch of models.
 
 ```{python eval=FALSE}
 model = Schelling(10, 10, 0.8, 0.2, 3)
@@ -144,6 +151,7 @@ while model.running and model.schedule.steps < 100:
     model.step()
 print(model.schedule.steps)  # Show how many steps have actually run
 ```
+
 Data Collection: Data collection is essential to ensure that we obtained the necessary data after each step of the simulation. You can use the built-in datacollection module. In this case, we only need to know whether the agent is happy or not.
 
 ```{python eval=FALSE}
@@ -151,10 +159,11 @@ model_out = model.datacollector.get_model_vars_dataframe()
 model_out.head()
 ```
 
+This option is also available for agents.
 
 ```{python eval=FALSE}
 agent_df = model.datacollector.get_agent_vars_dataframe()
-agent_df
+agent_df.head()
 ```
 
 ### Infection model
