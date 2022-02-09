@@ -13,7 +13,7 @@ This tutorial first will focus the Schelling Segregation model, a use-case of ag
 
 > The Schelling segregation model is a classic agent-based model, demonstrating how even a mild preference for similar neighbors can lead to a much higher degree of segregation than we would intuitively expect. The model consists of agents on a square grid, where each grid cell can contain at most one agent. Agents come in two colors: red and blue. They are happy if a certain number of their eight possible neighbors are of the same color, and unhappy otherwise. Unhappy agents will pick a random empty cell to move to each step, until they are happy. The model keeps running until there are no unhappy agents. By default, the number of similar neighbors the agents need to be happy is set to 3. That means the agents would be perfectly happy with a majority of their neighbors being of a different color (e.g. a Blue agent would be happy with five Red neighbors and three Blue ones). Despite this, the model consistently leads to a high degree of segregation, with most agents ending up with no neighbors of a different color.
 
-The code for this model is simple we will go through each part one-by-one to have a clearer understanding of how agent-based modeling works. The procedure includes steps such as Initializing the agent class, creating a step function, extracting the number of similar neighbors and moving the agent to an empty location if the agent is unhappy. 
+The code for this model is simple we will go through each part one-by-one to have a clearer understanding of how agent-based modeling works. The procedure includes steps such as Initializing the agent class, creating a step function, extracting the number of similar neighbors and moving the agent to an empty location if the agent is unhappy.
 
 First we upload the necessary modules
 
@@ -27,11 +27,9 @@ import matplotlib.pyplot as plt
 
 ```
 
-
 The system will consists of at least a basic agent class and a model class.
 
-Let's start by writing the agent class first. We will need to define 2 main variables of position and agent type and a dependency variable to model to get access to the variables specified in the model.  
-
+Let's start by writing the agent class first. We will need to define 2 main variables of position and agent type and a dependency variable to model to get access to the variables specified in the model.
 
 ```{python eval=FALSE}
 
@@ -152,7 +150,7 @@ while model.running and model.schedule.steps < 100:
 print(model.schedule.steps)  # Show how many steps have actually run
 ```
 
-Data Collection: Data collection is essential to ensure that we obtained the necessary data after each step of the simulation. You can use the built-in datacollection module. In this case, we only need to know whether the agent is happy or not.
+Data Collection: Data collection is essential to ensure that we obtained the necessary data after each step of the simulation. You can use the built-in data collection module. In this case, we only need to know whether the agent is happy or not.
 
 ```{python eval=FALSE}
 model_out = model.datacollector.get_model_vars_dataframe()
@@ -170,7 +168,7 @@ agent_df.head()
 
 Mesa SIR is an extension for Python's Agent Based Modeling Library Mesa. Mesa SIR provides the basic building blocks for an Agent Based Susceptible-Infected-Recovered (SIR) Epidemic model. The hope is others will improve upon it to make it a robust ABM extension to aid in understanding and decision making for both COVID-19 and future pandemics.
 
-the main differences between this model and a grid based model are as follows:
+As above first we load required packages
 
 ```{python eval=FALSE}
 %matplotlib notebook
@@ -187,6 +185,8 @@ import pandas as pd
 import collections
 ```
 
+This is function to be used by the agents.
+
 ```{python eval=FALSE}
 def flatten(x):
     if isinstance(x, collections.Iterable):
@@ -195,6 +195,7 @@ def flatten(x):
         return [x]
 ```
 
+Again we start by writing the agent class first. We will need to define main variables including name, position, and neighbors at each step as well as a dependency variable to model to get access to the variables specified in the model.
 
 ```{python eval=FALSE}
 class MyAgent(Agent):
@@ -241,6 +242,8 @@ class MyAgent(Agent):
         self.model.space.move_agent(self, new_pos)
 ```
 
+Then in the model class we specify the grid size, agent headings, and he information to be collected in data collectors.
+
 ```{python eval=FALSE}
 class MyModel(Model):
     
@@ -274,10 +277,14 @@ class MyModel(Model):
         self.dc.collect(self)
 ```
 
+Here we specify the number of agents and steps.
+
 ```{python eval=FALSE}
 nagent=30
 nstep=200
 ```
+
+Here instead of using scheduler with random activation which activates all the agents once per step, in random order we just call the step function in a loop.
 
 ```{python eval=FALSE}
 model = MyModel(nagent)
@@ -290,10 +297,15 @@ agent_df = model.dc.get_agent_vars_dataframe()
 model_df
 ```
 
-```{python eval=FALSE}
-agent_df["neigh"]
-```
+Similar to above you can use the built-in data collection module to get access to model level or agent level data.
 
+```{python eval=FALSE}
+model_df = model.dc.get_model_vars_dataframe()
+agent_df = model.dc.get_agent_vars_dataframe()
+
+
+model_df
+```
 
 ## References
 
